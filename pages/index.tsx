@@ -17,6 +17,7 @@ import { MdDarkMode } from "react-icons/md";
 import { useForm } from "react-hook-form";
 export default function Home() {
   const formBackground = useColorModeValue("gray.100", "gray.700");
+  const buttonTextColor = useColorModeValue("white", "black");
 
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -68,7 +69,7 @@ export default function Home() {
             <Input
               placeholder="E-mail"
               type="email"
-              w={[40, 60, 72]}
+              w={[48, 60, 72]}
               variant="flushed"
               {...register("email", {
                 required: true,
@@ -82,7 +83,7 @@ export default function Home() {
             <Input
               placeholder="Password"
               type="password"
-              w={[40, 60, 72]}
+              w={[48, 60, 72]}
               mt={8}
               variant="flushed"
               {...register("password", { required: true })}
@@ -91,9 +92,9 @@ export default function Home() {
           </FormControl>
           <Button
             mt={8}
-            colorScheme="purple"
-            w={[40, 60, 72]}
-            color="white"
+            colorScheme="teal"
+            w={[48, 60, 72]}
+            color={buttonTextColor}
             type="submit"
             onClick={handleSubmit(onSubmit)}
           >
@@ -102,7 +103,7 @@ export default function Home() {
           <Button
             mt={3}
             colorScheme="blackAlpha"
-            w={[40, 60, 72]}
+            w={[48, 60, 72]}
             color="white"
           >
             <Icon as={FaGithub} mr={2} mt="0.5" w={5} h={5} /> Login with Github
