@@ -1,3 +1,7 @@
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import { signIn, getSession } from "next-auth/react";
 import {
   Button,
   Heading,
@@ -11,26 +15,43 @@ import {
   Box,
   useColorMode,
 } from "@chakra-ui/react";
-import { FaGithub, FaSun } from "react-icons/fa";
+import { FaGithub, FaSun, FaGoogle } from "react-icons/fa";
 import { MdDarkMode } from "react-icons/md";
-
 import { useForm } from "react-hook-form";
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
 export default function Home() {
   const formBackground = useColorModeValue("gray.100", "gray.700");
   const buttonTextColor = useColorModeValue("white", "black");
-
   const { colorMode, toggleColorMode } = useColorMode();
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm();
+  const { push } = useRouter();
 
   function onSubmit(data: any) {
-    console.log(data);
-    reset();
+    signIn("credentials", data);
   }
 
   return (
@@ -41,17 +62,24 @@ export default function Home() {
       justifyContent="center"
       direction="column"
     >
+      <Head>
+        <title>Login</title>
+      </Head>
       <Box top={0} right={0} position="absolute" m={0} p={0}>
-        <Flex direction="row" alignItems="center" justifyContent="center">
-          <Icon as={FaSun} mt={5} mr={2} h={5} w={5} color="yellow.400" />
+        <Flex
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          mt={5}
+        >
+          <Icon as={FaSun} mr={2} h={5} w={5} color="yellow.400" />
           <Switch
             colorScheme="whiteAlpha"
-            mt={5}
             mr={2}
             isChecked={colorMode === "dark"}
             onChange={toggleColorMode}
           />
-          <Icon as={MdDarkMode} mt={5} mr={5} h={5} w={5} />
+          <Icon as={MdDarkMode} mr={[1, 2, 3]} h={5} w={5} />
         </Flex>
       </Box>
       <form>
@@ -64,7 +92,7 @@ export default function Home() {
           alignItems="center"
           justifyContent="center"
         >
-          <Heading mb={10}>Login</Heading>
+          <Heading mb={5}>Login</Heading>
           <FormControl isInvalid={!!errors.email}>
             <Input
               placeholder="E-mail"
@@ -92,6 +120,7 @@ export default function Home() {
           </FormControl>
           <Button
             mt={8}
+            mb={10}
             colorScheme="teal"
             w={[48, 60, 72]}
             color={buttonTextColor}
@@ -105,8 +134,18 @@ export default function Home() {
             colorScheme="blackAlpha"
             w={[48, 60, 72]}
             color="white"
+            onClick={() => signIn("github")}
           >
             <Icon as={FaGithub} mr={2} mt="0.5" w={5} h={5} /> Login with Github
+          </Button>
+          <Button
+            mt={3}
+            colorScheme="orange"
+            w={[48, 60, 72]}
+            // color="white"
+            onClick={() => signIn("google")}
+          >
+            <Icon as={FaGoogle} mr={2} mt="0.5" w={5} h={5} /> Login with Google
           </Button>
         </Flex>
       </form>
