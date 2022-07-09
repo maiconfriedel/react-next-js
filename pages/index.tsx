@@ -1,38 +1,90 @@
-import { FormEvent } from "react";
-
+import {
+  Button,
+  Heading,
+  Flex,
+  Input,
+  useColorModeValue,
+  FormControl,
+  FormErrorMessage,
+  Icon,
+} from "@chakra-ui/react";
+import { FaGithub } from "react-icons/fa";
+import { useForm } from "react-hook-form";
 export default function Home() {
-  function handleSubmit(ev: FormEvent) {
-    ev.preventDefault();
+  const formBackground = useColorModeValue("gray.100", "gray.700");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  function onSubmit(data: any) {
+    console.log(data);
+    reset();
   }
 
   return (
-    <div className="bg-gray-200 flex flex-col items-center justify-center h-screen w-screen">
-      <form
-        className="flex flex-col items-center justify-center"
-        onSubmit={handleSubmit}
-      >
-        <h1 className="text-3xl mb-10 font-Anton">Sign in with your Account</h1>
-        <input
-          className="border-2 border-gray-500 rounded-md mb-4 p-2 w-96 text-center outline-none focus:border-2 focus:border-gray-900  "
-          type="email"
-          name="email"
-          placeholder="E-mail"
-        />
+    <Flex
+      width="100vw"
+      height="100vh"
+      alignItems="center"
+      justifyContent="center"
+      direction="column"
+    >
+      <form>
+        <Flex
+          direction="column"
+          background={formBackground}
+          rounded={6}
+          py={12}
+          px={20}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Heading mb={10}>Login</Heading>
 
-        <input
-          className="border-2 border-gray-500 rounded-md mb-10 p-2 w-96 text-center outline-none focus:border-2 focus:border-gray-900"
-          type="password"
-          name="password"
-          placeholder="Password"
-        />
+          <FormControl isInvalid={!!errors.email}>
+            <Input
+              placeholder="E-mail"
+              type="email"
+              w="72"
+              variant="flushed"
+              {...register("email", {
+                required: true,
+                pattern: /^[a-z0-9.]+@[a-z0-9]+.[a-z]+.([a-z]+)?$/i,
+              })}
+            />
+            <FormErrorMessage>Must be a valid email</FormErrorMessage>
+          </FormControl>
 
-        <button className="bg-gray-700 p-3 text-white font-bold rounded-md w-48 mx-2 hover:bg-gray-900 transition-colors">
-          Sign In
-        </button>
-        <button className="bg-gray-700 p-3 text-white font-bold rounded-md w-48 mx-2 hover:bg-gray-900 transition-colors">
-          Sign In with Github
-        </button>
+          <FormControl isInvalid={!!errors.password}>
+            <Input
+              placeholder="Password"
+              type="password"
+              w="72"
+              mt={8}
+              variant="flushed"
+              {...register("password", { required: true })}
+            />
+            <FormErrorMessage>Password is required</FormErrorMessage>
+          </FormControl>
+          <Button
+            mt={8}
+            colorScheme="purple"
+            w="72"
+            color="white"
+            type="submit"
+            onClick={handleSubmit(onSubmit)}
+          >
+            Login
+          </Button>
+          <Button mt={3} colorScheme="blackAlpha" w="72" color="white">
+            <Icon as={FaGithub} mr={2} mt="0.5" w={5} h={5} /> Login with Github
+          </Button>
+        </Flex>
       </form>
-    </div>
+    </Flex>
   );
 }
