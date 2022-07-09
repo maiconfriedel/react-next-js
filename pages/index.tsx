@@ -7,11 +7,18 @@ import {
   FormControl,
   FormErrorMessage,
   Icon,
+  Switch,
+  Box,
+  useColorMode,
 } from "@chakra-ui/react";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaSun } from "react-icons/fa";
+import { MdDarkMode } from "react-icons/md";
+
 import { useForm } from "react-hook-form";
 export default function Home() {
   const formBackground = useColorModeValue("gray.100", "gray.700");
+
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const {
     register,
@@ -33,6 +40,19 @@ export default function Home() {
       justifyContent="center"
       direction="column"
     >
+      <Box top={0} right={0} position="absolute" m={0} p={0}>
+        <Flex direction="row" alignItems="center" justifyContent="center">
+          <Icon as={FaSun} mt={5} mr={2} h={5} w={5} color="yellow.400" />
+          <Switch
+            colorScheme="whiteAlpha"
+            mt={5}
+            mr={2}
+            isChecked={colorMode === "dark"}
+            onChange={toggleColorMode}
+          />
+          <Icon as={MdDarkMode} mt={5} mr={5} h={5} w={5} />
+        </Flex>
+      </Box>
       <form>
         <Flex
           direction="column"
@@ -44,12 +64,11 @@ export default function Home() {
           justifyContent="center"
         >
           <Heading mb={10}>Login</Heading>
-
           <FormControl isInvalid={!!errors.email}>
             <Input
               placeholder="E-mail"
               type="email"
-              w="72"
+              w={[40, 60, 72]}
               variant="flushed"
               {...register("email", {
                 required: true,
@@ -63,7 +82,7 @@ export default function Home() {
             <Input
               placeholder="Password"
               type="password"
-              w="72"
+              w={[40, 60, 72]}
               mt={8}
               variant="flushed"
               {...register("password", { required: true })}
@@ -73,14 +92,19 @@ export default function Home() {
           <Button
             mt={8}
             colorScheme="purple"
-            w="72"
+            w={[40, 60, 72]}
             color="white"
             type="submit"
             onClick={handleSubmit(onSubmit)}
           >
             Login
           </Button>
-          <Button mt={3} colorScheme="blackAlpha" w="72" color="white">
+          <Button
+            mt={3}
+            colorScheme="blackAlpha"
+            w={[40, 60, 72]}
+            color="white"
+          >
             <Icon as={FaGithub} mr={2} mt="0.5" w={5} h={5} /> Login with Github
           </Button>
         </Flex>
