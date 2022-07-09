@@ -17,10 +17,15 @@ export default NextAuth({
       name: "Credentials",
       credentials: {},
       async authorize(credentials: any, req) {
-        return {
-          email: credentials.email,
-          accessToken: "iugdfiugasdiufghawuifedgaiwujfehgauiowfhoiuawsdefh",
-        };
+        const response = await fetch("http://localhost:3000/api/auth/login", {
+          body: JSON.stringify(credentials),
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const user = await response.json();
+        return user;
       },
     }),
     GoogleProvider({
@@ -38,10 +43,16 @@ export default NextAuth({
         const today = new Date();
 
         return {
-          accessToken: account.access_token,
+          accessToken:
+            account.provider === "credentials"
+              ? user.access_token
+              : account.access_token,
           accessTokenExpires: today.setHours(today.getHours() + 1),
-          refreshToken: account.refresh_token,
-          user,
+          refreshToken:
+            account.provider === "credentials"
+              ? user.refresh_token
+              : account.refresh_token,
+          user: account.provider === "credentials" ? user.user : user,
           provider: account.provider,
         };
       }

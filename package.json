@@ -13,6 +13,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^6",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.2.0",
     "next-auth": "^4.9.0",
     "react": "18.2.0",
@@ -21,6 +22,7 @@
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.15",
     "@types/react-icons": "^3.0.0",
