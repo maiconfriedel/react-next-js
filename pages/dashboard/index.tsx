@@ -19,9 +19,11 @@ export default function Dashboard() {
         justifyContent="flex-start"
         height="calc(100vh - 50px)"
         flexDirection="column"
+        padding={5}
       >
         <Heading mt={2}>Dashboard</Heading>
         <Text>{data?.user?.name}</Text>
+        <Text wordBreak="break-all">{data?.accessToken as string}</Text>
       </Flex>
     </Flex>
   );

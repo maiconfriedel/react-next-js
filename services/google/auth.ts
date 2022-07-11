@@ -38,7 +38,7 @@ export async function getGoogleRefreshToken(token: any) {
       provider: token.provider,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     return {
       ...token,

@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { signIn, getSession } from "next-auth/react";
 import {
@@ -14,15 +13,17 @@ import {
   Switch,
   Box,
   useColorMode,
+  Alert,
+  AlertIcon,
+  useToast,
 } from "@chakra-ui/react";
 import { FaGithub, FaSun, FaGoogle } from "react-icons/fa";
 import { MdDarkMode } from "react-icons/md";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session = await getSession({ req });
 
   if (session) {
@@ -33,14 +34,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
   }
-
   return {
     props: {},
   };
 };
 
 export default function Home() {
-  const formBackground = useColorModeValue("gray.100", "gray.700");
+  const formBackground = useColorModeValue("white", "gray.700");
   const buttonTextColor = useColorModeValue("white", "black");
   const { colorMode, toggleColorMode } = useColorMode();
   const {
@@ -48,7 +48,22 @@ export default function Home() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { push } = useRouter();
+  const { query } = useRouter();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (query["error"]) {
+      toast({
+        title: "Failed to login",
+        description: query["error"],
+        status: "error",
+        duration: 5000,
+        position: "bottom",
+        isClosable: true,
+        variant: "left-accent",
+      });
+    }
+  }, [query, toast]);
 
   function onSubmit(data: any) {
     signIn("credentials", data);
@@ -129,6 +144,7 @@ export default function Home() {
           >
             Login
           </Button>
+
           <Button
             mt={3}
             colorScheme="blackAlpha"
@@ -140,9 +156,8 @@ export default function Home() {
           </Button>
           <Button
             mt={3}
-            colorScheme="orange"
+            colorScheme="yellow"
             w={[48, 60, 72]}
-            // color="white"
             onClick={() => signIn("google")}
           >
             <Icon as={FaGoogle} mr={2} mt="0.5" w={5} h={5} /> Login with Google

@@ -6,6 +6,7 @@ import {
   getGoogleRefreshToken,
   GOOGLE_AUTHORIZATION_URL,
 } from "../../../services/google/auth";
+import { getCredentialsRefreshToken } from "../../../services/credentials/auth";
 
 export default NextAuth({
   providers: [
@@ -17,15 +18,24 @@ export default NextAuth({
       name: "Credentials",
       credentials: {},
       async authorize(credentials: any, req) {
-        const response = await fetch("http://localhost:3000/api/auth/login", {
-          body: JSON.stringify(credentials),
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const user = await response.json();
-        return user;
+        try {
+          const response = await fetch("http://localhost:3333/login", {
+            body: JSON.stringify(credentials),
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const user = await response.json();
+
+          if (user.message) {
+            throw new Error(user.errors[0]);
+          }
+
+          return user;
+        } catch (err: any) {
+          throw new Error(err.message);
+        }
       },
     }),
     GoogleProvider({
@@ -36,6 +46,7 @@ export default NextAuth({
   ],
   pages: {
     signIn: "/",
+    error: "/",
   },
   callbacks: {
     async jwt({ token, user, account }) {
@@ -63,9 +74,13 @@ export default NextAuth({
 
       if (token.provider === "google") {
         return getGoogleRefreshToken(token);
-      } else {
-        return token;
       }
+
+      if (token.provider === "credentials") {
+        return getCredentialsRefreshToken(token);
+      }
+
+      return token;
     },
     async session({ session, token }) {
       session.user = token.user;
